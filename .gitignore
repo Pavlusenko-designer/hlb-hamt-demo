@@ -1,0 +1,6 @@
+node_modules/
+.claude/
+backups/
+reference/
+v1/
+_*.png
