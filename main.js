@@ -1002,4 +1002,68 @@ document.addEventListener('DOMContentLoaded', () => {
     initPageMotion();
     initSmoothScroll();
     initMobileCenterCards();
+    initCardLinks();
+    initContactForm();
 });
+
+function initCardLinks() {
+    document.querySelectorAll('.approved-group-card[data-card-href]').forEach((card) => {
+        const href = card.getAttribute('data-card-href');
+        if (!href) return;
+
+        card.addEventListener('click', (event) => {
+            if (event.target.closest('a')) return;
+            window.location.href = href;
+        });
+
+        card.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            if (event.target.closest('a')) return;
+            event.preventDefault();
+            window.location.href = href;
+        });
+    });
+}
+
+function initContactForm() {
+    const phoneInput = document.querySelector('.uae-phone-input');
+    if (!phoneInput) return;
+
+    const formatUAEPhone = (value) => {
+        const digits = value.replace(/\D/g, '');
+        let normalized = digits;
+
+        if (normalized.startsWith('00')) normalized = normalized.slice(2);
+        if (normalized.startsWith('971')) normalized = normalized.slice(3);
+        if (normalized.startsWith('0')) normalized = normalized.slice(1);
+
+        normalized = normalized.slice(0, 9);
+
+        const part1 = normalized.slice(0, 2);
+        const part2 = normalized.slice(2, 5);
+        const part3 = normalized.slice(5, 9);
+
+        let formatted = '+971';
+        if (part1) formatted += ` ${part1}`;
+        if (part2) formatted += ` ${part2}`;
+        if (part3) formatted += ` ${part3}`;
+
+        return formatted;
+    };
+
+    phoneInput.addEventListener('focus', () => {
+        if (!phoneInput.value.trim()) {
+            phoneInput.value = '+971 ';
+        }
+    });
+
+    phoneInput.addEventListener('input', () => {
+        phoneInput.value = formatUAEPhone(phoneInput.value);
+    });
+
+    phoneInput.addEventListener('blur', () => {
+        if (phoneInput.value.trim() === '+971') {
+            phoneInput.value = '';
+        }
+    });
+}
