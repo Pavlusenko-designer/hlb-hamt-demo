@@ -356,8 +356,12 @@ body.theme-dark {
 
 .theme-dark .nav-icon-btn svg,
 .theme-dark .floating-btn svg {
-    fill: #fff;
     stroke: #fff;
+}
+
+.theme-dark .nav-icon-btn svg,
+.theme-dark .floating-btn svg:not([fill="none"]) {
+    fill: #fff;
 }
 
 .theme-dark .hero-overlay {
