@@ -5,3 +5,4 @@ backups/
 reference/
 v1/
 _*.png
+.netlify-dev*.log

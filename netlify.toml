@@ -1,3 +1,12 @@
 [build]
-  publish = "."
+  publish = "public"
   command = ""
+  functions = "netlify/functions"
+
+[functions]
+  included_files = ["private/**"]
+
+[[redirects]]
+  from = "/protected-main.js"
+  to = "/.netlify/functions/protected-main"
+  status = 200

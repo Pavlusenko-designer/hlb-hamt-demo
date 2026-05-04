@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <title>HLB HAMT Demo Access</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #eaf7fb;
+            --muted: rgba(234, 247, 251, 0.68);
+            --line: rgba(184, 224, 233, 0.18);
+            --blue: #005a77;
+            --gold: #fbba00;
+            --deep: #050d12;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Work Sans", sans-serif;
+            color: var(--ink);
+            background:
+                linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+                radial-gradient(circle at 16% 10%, rgba(0, 90, 119, 0.46), transparent 30%),
+                radial-gradient(circle at 84% 18%, rgba(251, 186, 0, 0.16), transparent 24%),
+                linear-gradient(145deg, #050d12 0%, #071923 54%, #03080c 100%);
+            background-size: 92px 92px, 92px 92px, auto, auto, auto;
+        }
+
+        .access-shell {
+            display: grid;
+            min-height: 100vh;
+            place-items: center;
+            padding: 28px;
+        }
+
+        .access-panel {
+            width: min(100%, 520px);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: clamp(28px, 6vw, 48px);
+            background: rgba(5, 13, 18, 0.78);
+            box-shadow: 0 28px 80px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(18px);
+        }
+
+        .brand-mark {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 38px;
+        }
+
+        .brand-emblem {
+            display: grid;
+            width: 48px;
+            height: 48px;
+            place-items: center;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--blue), #0b7898);
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .brand-text {
+            display: grid;
+            gap: 3px;
+        }
+
+        .brand-name {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .brand-sub {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        h1 {
+            margin: 0 0 14px;
+            max-width: 10ch;
+            font-size: clamp(38px, 9vw, 64px);
+            font-weight: 500;
+            line-height: 0.95;
+            letter-spacing: 0;
+        }
+
+        .intro {
+            margin: 0 0 22px;
+            max-width: 38rem;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.55;
+        }
+
+        .request-access {
+            margin: 0 0 30px;
+            color: rgba(234, 247, 251, 0.74);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .request-access a {
+            color: var(--gold);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .request-access a:hover,
+        .request-access a:focus {
+            text-decoration: underline;
+        }
+
+        .access-form {
+            display: grid;
+            gap: 14px;
+        }
+
+        .field-label {
+            color: rgba(234, 247, 251, 0.82);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+        }
+
+        input {
+            width: 100%;
+            min-width: 0;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 16px 15px;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--ink);
+            font: inherit;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: rgba(251, 186, 0, 0.76);
+            box-shadow: 0 0 0 4px rgba(251, 186, 0, 0.12);
+        }
+
+        button {
+            min-width: 118px;
+            border: 0;
+            border-radius: 8px;
+            padding: 0 20px;
+            background: var(--gold);
+            color: #0b1720;
+            cursor: pointer;
+            font: inherit;
+            font-weight: 700;
+        }
+
+        button:disabled {
+            cursor: wait;
+            opacity: 0.7;
+        }
+
+        .status {
+            min-height: 22px;
+            margin: 0;
+            color: #ffd86b;
+            font-size: 14px;
+        }
+
+        .status[data-state="error"] {
+            color: #ff9f9f;
+        }
+
+        @media (max-width: 560px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+
+            button {
+                min-height: 52px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="access-shell">
+        <section class="access-panel" aria-labelledby="accessTitle">
+            <div class="brand-mark" aria-label="HLB HAMT">
+                <div class="brand-emblem">HLB</div>
+                <div class="brand-text">
+                    <span class="brand-name">HLB HAMT</span>
+                    <span class="brand-sub">Client preview access</span>
+                </div>
+            </div>
+
+            <h1 id="accessTitle">Welcome in.</h1>
+            <p class="intro">This preview is private while the homepage is being prepared. If you already have the demo password, enter it below and we will open the preview for you.</p>
+            <p class="request-access">Need access? Email <a href="mailto:v.fedzkin@andersenlab.com?subject=HLB%20HAMT%20demo%20access%20request">v.fedzkin@andersenlab.com</a> and we will help you get set up.</p>
+
+            <form class="access-form" id="accessForm" autocomplete="off">
+                <label class="field-label" for="password">Password</label>
+                <div class="input-row">
+                    <input id="password" name="password" type="password" required autofocus>
+                    <button type="submit" id="submitButton">Continue</button>
+                </div>
+                <p class="status" id="status" role="status" aria-live="polite"></p>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById("accessForm");
+        const password = document.getElementById("password");
+        const status = document.getElementById("status");
+        const submitButton = document.getElementById("submitButton");
+
+        async function loadProtectedPage(body) {
+            let response;
+            try {
+                response = await fetch("/.netlify/functions/access", {
+                    method: body ? "POST" : "GET",
+                    credentials: "same-origin",
+                    headers: body ? { "Content-Type": "application/json" } : undefined,
+                    body: body ? JSON.stringify(body) : undefined
+                });
+            } catch {
+                throw new Error("The access service is not available from this URL. Please open the Netlify preview link, or use http://localhost:8888 for local testing.");
+            }
+
+            if (!response.ok) {
+                throw new Error(response.status === 401 ? "That password did not work. Please try again or request access by email." : "The access service is not available on this URL. Please open the Netlify preview link, or use http://localhost:8888 for local testing.");
+            }
+
+            const html = await response.text();
+            document.open();
+            document.write(html);
+            document.close();
+        }
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            status.textContent = "Checking your password...";
+            status.removeAttribute("data-state");
+            submitButton.disabled = true;
+
+            try {
+                await loadProtectedPage({ password: password.value.trim() });
+            } catch (error) {
+                status.textContent = error.message;
+                status.dataset.state = "error";
+                submitButton.disabled = false;
+                password.select();
+            }
+        });
+
+        loadProtectedPage().catch(() => {});
+    </script>
+</body>
+</html>
